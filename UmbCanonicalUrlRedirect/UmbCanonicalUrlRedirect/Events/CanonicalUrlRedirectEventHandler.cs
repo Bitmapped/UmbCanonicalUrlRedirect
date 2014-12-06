@@ -1,14 +1,19 @@
 ﻿using System;
 using System.Web;
-using Umbraco.Core;
-using Umbraco.Web.Routing;
-using Umbraco.Core.Configuration;
 using umbraco;
+using Umbraco.Core;
+using Umbraco.Core.Configuration;
+using Umbraco.Web.Routing;
 
 namespace UmbCanonicalUrlRedirect.Events
 {
     public class CanonicalUrlRedirectEventHandler : ApplicationEventHandler
     {
+        /// <summary>
+        /// Register event handler on start.
+        /// </summary>
+        /// <param name="httpApplicationBase">Umbraco application.</param>
+        /// <param name="applicationContext">Application context.</param>
         protected override void ApplicationStarted(UmbracoApplicationBase umbracoApplication, ApplicationContext applicationContext)
         {
             PublishedContentRequest.Prepared += PublishedContentRequest_Prepared;
@@ -17,16 +22,16 @@ namespace UmbCanonicalUrlRedirect.Events
         /// <summary>
         /// Event handler to redirect traffic to the canonical URL.
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
+        /// <param name="sender">Sender object</param>
+        /// <param name="e">Event args</param>
         private void PublishedContentRequest_Prepared(object sender, EventArgs e)
         {
             // Get request.
             PublishedContentRequest request = sender as PublishedContentRequest;
             HttpContext context = HttpContext.Current;
 
-            // Ensure there is a valid and it has published content. Otherwise, return without doing anything.
-            if ((request == null) || (!request.HasPublishedContent))
+            // Ensure request is valid and page exists.  Otherwise, return without doing anything.
+            if ((request == null) || (request.Is404))
             {
                 return;
             }
@@ -40,7 +45,7 @@ namespace UmbCanonicalUrlRedirect.Events
             {
                 bool noCanonicalRedirect = false;
 
-                // Check to see if we should redirect this page.  If page property is null, assume we should allow redirect.                
+                // Check to see if we should redirect this page.  If page property is null, assume we should allow redirect.
                 if (request.InitialPublishedContent.GetProperty("umbNoCanonicalRedirect") != null)
                 {
                     noCanonicalRedirect = (bool)request.InitialPublishedContent.GetProperty("umbNoCanonicalRedirect").Value;
@@ -71,8 +76,6 @@ namespace UmbCanonicalUrlRedirect.Events
                         request.SetRedirectPermanent(pathWithSlash);
                     }
                 }
-
-
             }
         }
     }

@@ -1,0 +1,36 @@
+﻿<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<umbPackage>
+  <files>
+    <file>
+      <guid>UmbCanonicalUrlRedirect.dll</guid>
+      <orgPath>/bin</orgPath>
+      <orgName>UmbCanonicalUrlRedirect.dll</orgName>
+    </file>
+  </files>
+  <info>
+    <package>
+      <name>UmbCanonicalUrlRedirect</name>
+      <version>1.0</version>
+      <license url="https://umbcanonicalurlredirect.codeplex.com/license">MIT License</license>
+      <url>https://umbcanonicalurlredirect.codeplex.com/</url>
+      <requirements>
+        <major>3</major>
+        <minor>0</minor>
+        <patch>0</patch>
+      </requirements>
+    </package>
+    <author>
+      <name>Brian Powell</name>
+      <website>https://umbcanonicalurlredirect.codeplex.com/</website>
+    </author>
+    <readme><![CDATA[If desired, add new true/false-type page properties in Umbraco so specify pages that should not get a canonical URL rewrite. They will still be rewritten for a trailing slash if approprite.
+- umbNoCanonicalRedirect]]></readme>
+  </info>
+  <DocumentTypes />
+  <Templates />
+  <Stylesheets />
+  <Macros />
+  <DictionaryItems />
+  <Languages />
+  <DataTypes />
+</umbPackage>

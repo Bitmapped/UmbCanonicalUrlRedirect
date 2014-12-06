@@ -195,7 +195,11 @@
     <Compile Include="Events\CanonicalUrlRedirectEventHandler.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Content Include="UmbracoPackage\package.xml" />
+    <Content Include="UmbracoPackage\Readme.txt" />
+    <Content Include="UmbracoPackage\UmbCanonicalUrlRedirect.dll" />
+  </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
     <None Include="packages.config" />

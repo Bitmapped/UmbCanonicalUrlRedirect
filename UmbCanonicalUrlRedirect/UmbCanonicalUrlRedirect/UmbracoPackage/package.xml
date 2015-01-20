@@ -10,12 +10,12 @@
   <info>
     <package>
       <name>UmbCanonicalUrlRedirect</name>
-      <version>1.0</version>
+      <version>1.1.0</version>
       <license url="https://umbcanonicalurlredirect.codeplex.com/license">MIT License</license>
       <url>https://umbcanonicalurlredirect.codeplex.com/</url>
       <requirements>
-        <major>3</major>
-        <minor>0</minor>
+        <major>7</major>
+        <minor>2</minor>
         <patch>0</patch>
       </requirements>
     </package>

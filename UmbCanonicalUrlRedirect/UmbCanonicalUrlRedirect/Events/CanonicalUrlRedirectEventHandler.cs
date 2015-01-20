@@ -4,6 +4,7 @@ using umbraco;
 using Umbraco.Core;
 using Umbraco.Core.Configuration;
 using Umbraco.Web.Routing;
+using Umbraco.Core.Logging;
 
 namespace UmbCanonicalUrlRedirect.Events
 {
@@ -30,9 +31,17 @@ namespace UmbCanonicalUrlRedirect.Events
             PublishedContentRequest request = sender as PublishedContentRequest;
             HttpContext context = HttpContext.Current;
 
-            // Ensure request is valid and page exists.  Otherwise, return without doing anything.
-            if ((request == null) || (request.Is404))
+            // If the response is invalid, the page doesn't exist, or will be changed already, don't do anything more.
+            if ((request == null) || (request.Is404) || (request.IsRedirect) || (request.ResponseStatusCode > 0))
             {
+                // Log for debugging.
+                LogHelper.Debug<CanonicalUrlRedirectEventHandler>("Stopping CanonicalUrlRedirect for requested URL {0} because request was null ({1}), was 404 ({2}), was a redirect ({3}), or status code ({4}) was already set.",
+                    () => context.Request.Url.AbsolutePath,
+                    () => (request == null),
+                    () => (request.Is404),
+                    () => (request.IsRedirect),
+                    () => request.ResponseStatusCode);
+
                 return;
             }
 
@@ -60,6 +69,11 @@ namespace UmbCanonicalUrlRedirect.Events
                     // Set for Umbraco to perform redirection.
                     request.SetRedirectPermanent(redirectUrl);
 
+                    // Log for debugging.
+                    LogHelper.Debug<CanonicalUrlRedirectEventHandler>("Permanently redirecting {0} to {1}.",
+                        () => requestedPath,
+                        () => properPath);
+
                     return;
                 }
 
@@ -74,6 +88,10 @@ namespace UmbCanonicalUrlRedirect.Events
                     {
                         // Set for Umbraco to perform redirection.
                         request.SetRedirectPermanent(pathWithSlash);
+
+                        // Log for debugging.
+                        LogHelper.Debug<CanonicalUrlRedirectEventHandler>("Adding slash and permanently redirecting {0}.",
+                            () => pathWithSlash);
                     }
                 }
             }

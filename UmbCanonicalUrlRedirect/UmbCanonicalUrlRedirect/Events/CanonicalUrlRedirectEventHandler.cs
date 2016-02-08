@@ -5,6 +5,7 @@ using Umbraco.Core;
 using Umbraco.Core.Configuration;
 using Umbraco.Web.Routing;
 using Umbraco.Core.Logging;
+using Umbraco.Web;
 
 namespace UmbCanonicalUrlRedirect.Events
 {
@@ -28,16 +29,17 @@ namespace UmbCanonicalUrlRedirect.Events
         private void PublishedContentRequest_Prepared(object sender, EventArgs e)
         {
             // Get request.
-            PublishedContentRequest request = sender as PublishedContentRequest;
-            HttpContext context = HttpContext.Current;
+            var request = sender as PublishedContentRequest;
+            var context = HttpContext.Current;
 
             // If the response is invalid, the page doesn't exist, or will be changed already, don't do anything more.
-            if ((request == null) || (request.Is404) || (request.IsRedirect) || (request.ResponseStatusCode > 0))
+            if ((request == null) || (!request.HasPublishedContent) || (request.Is404) || (request.IsRedirect) || (request.ResponseStatusCode > 0))
             {
                 // Log for debugging.
-                LogHelper.Debug<CanonicalUrlRedirectEventHandler>("Stopping CanonicalUrlRedirect for requested URL {0} because request was null ({1}), was 404 ({2}), was a redirect ({3}), or status code ({4}) was already set.",
+                LogHelper.Debug<CanonicalUrlRedirectEventHandler>("Stopping IntranetRestrict for requested URL {0} because request was null ({1}), there was no published content ({2}), was 404 ({3}), was a redirect ({4}), or status code ({5}) was already set.",
                     () => context.Request.Url.AbsolutePath,
                     () => (request == null),
+                    () => (!request.HasPublishedContent),
                     () => (request.Is404),
                     () => (request.IsRedirect),
                     () => request.ResponseStatusCode);
@@ -45,55 +47,38 @@ namespace UmbCanonicalUrlRedirect.Events
                 return;
             }
 
-            // Get URLs.
-            string requestedPath = context.Request.Url.AbsolutePath;
-            string properPath = request.InitialPublishedContent.Url;
+            // Check to see if we should not redirect this page. Use InitialPublishedContent to get properties for requested page, not a login redirect.
+            if (request.InitialPublishedContent.HasProperty("umbNoCanonicalRedirect"))
+            {
+                if (request.InitialPublishedContent.GetPropertyValue<bool>("umbNoCanonicalRedirect"))
+                {
+                    // No redirect.
+                    return;
+                }
+            }
+
+            // Get URLs. Use InitialPublishedContent to get properties for requested page, not a login redirect.
+            var requestedPath = context.Request.Url.GetLeftPart(UriPartial.Path);
+            var properPath = request.InitialPublishedContent.UrlAbsolute();
 
             // If URLs don't match, perform redirect.
             if (requestedPath != properPath)
-            {
-                bool noCanonicalRedirect = false;
+            {       
+                // Calculate proper path and query string.
+                var properPathAndQuery = properPath + context.Request.Url.Query;
 
-                // Check to see if we should redirect this page.  If page property is null, assume we should allow redirect.
-                if (request.InitialPublishedContent.GetProperty("umbNoCanonicalRedirect") != null)
-                {
-                    noCanonicalRedirect = (bool)request.InitialPublishedContent.GetProperty("umbNoCanonicalRedirect").Value;
-                }
+                // Substitute proper path for requested path.
+                var redirectUrl = new Uri(request.Uri, properPathAndQuery);
 
-                // Perform canonical URL redirection if OK.
-                if (!noCanonicalRedirect)
-                {
-                    // Substitute proper path for requested path.
-                    string redirectUrl = request.Uri.AbsoluteUri.Replace(requestedPath, properPath);
+                // Set for Umbraco to perform redirection.
+                request.SetRedirectPermanent(redirectUrl.AbsoluteUri);
 
-                    // Set for Umbraco to perform redirection.
-                    request.SetRedirectPermanent(redirectUrl);
+                // Log for debugging.
+                LogHelper.Debug<CanonicalUrlRedirectEventHandler>("Permanently redirecting {0} to {1}.",
+                    () => requestedPath,
+                    () => properPath);
 
-                    // Log for debugging.
-                    LogHelper.Debug<CanonicalUrlRedirectEventHandler>("Permanently redirecting {0} to {1}.",
-                        () => requestedPath,
-                        () => properPath);
-
-                    return;
-                }
-
-                // Check if we need to handle trailing slash.
-                if ((GlobalSettings.UseDirectoryUrls) && (UmbracoConfig.For.UmbracoSettings().RequestHandler.AddTrailingSlash))
-                {
-                    // Get URL with trailing slash.
-                    var pathWithSlash = context.Request.Url.EndPathWithSlash().AbsolutePath;
-
-                    // Check to see if current URL has trailing slash.
-                    if (requestedPath != pathWithSlash)
-                    {
-                        // Set for Umbraco to perform redirection.
-                        request.SetRedirectPermanent(pathWithSlash);
-
-                        // Log for debugging.
-                        LogHelper.Debug<CanonicalUrlRedirectEventHandler>("Adding slash and permanently redirecting {0}.",
-                            () => pathWithSlash);
-                    }
-                }
+                return;
             }
         }
     }

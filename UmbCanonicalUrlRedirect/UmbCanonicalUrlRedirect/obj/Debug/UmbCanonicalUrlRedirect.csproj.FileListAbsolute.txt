@@ -102,6 +102,6 @@ C:\Visual Studio Projects\UmbCanonicalUrlRedirect\UmbCanonicalUrlRedirect\UmbCan
 C:\Visual Studio Projects\UmbCanonicalUrlRedirect\UmbCanonicalUrlRedirect\UmbCanonicalUrlRedirect\bin\Debug\WebMatrix.Data.xml
 C:\Visual Studio Projects\UmbCanonicalUrlRedirect\UmbCanonicalUrlRedirect\UmbCanonicalUrlRedirect\bin\Debug\WebMatrix.WebData.xml
 C:\Visual Studio Projects\UmbCanonicalUrlRedirect\UmbCanonicalUrlRedirect\UmbCanonicalUrlRedirect\obj\Debug\UmbCanonicalUrlRedirect.csproj.App.config
-C:\Visual Studio Projects\UmbCanonicalUrlRedirect\UmbCanonicalUrlRedirect\UmbCanonicalUrlRedirect\obj\Debug\UmbCanonicalUrlRedirect.csprojResolveAssemblyReference.cache
 C:\Visual Studio Projects\UmbCanonicalUrlRedirect\UmbCanonicalUrlRedirect\UmbCanonicalUrlRedirect\obj\Debug\UmbCanonicalUrlRedirect.dll
 C:\Visual Studio Projects\UmbCanonicalUrlRedirect\UmbCanonicalUrlRedirect\UmbCanonicalUrlRedirect\obj\Debug\UmbCanonicalUrlRedirect.pdb
+C:\Visual Studio Projects\UmbCanonicalUrlRedirect\UmbCanonicalUrlRedirect\UmbCanonicalUrlRedirect\obj\Debug\UmbCanonicalUrlRedirect.csprojResolveAssemblyReference.cache

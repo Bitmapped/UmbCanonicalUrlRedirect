@@ -8,3 +8,6 @@
 /UmbCanonicalUrlRedirect/UmbracoTest/App_Data/cache
 /UmbCanonicalUrlRedirect/UmbracoTest/App_Data/packages
 /UmbCanonicalUrlRedirect/UmbracoTest/App_Data/TEMP
+/UmbCanonicalUrlRedirect/.vs
+/UmbCanonicalUrlRedirect/UmbCanonicalUrlRedirect/obj
+/UmbCanonicalUrlRedirect/UmbracoTest/App_Data/Logs/UmbracoTraceLog.JACKSON.txt

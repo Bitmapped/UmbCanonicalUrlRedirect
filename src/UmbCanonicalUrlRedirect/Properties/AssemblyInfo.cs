@@ -6,7 +6,7 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("UmbCanonicalUrlRedirect")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyDescription("Umbraco package to force rewrite of canonical URLs.")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Brian M. Powell")]
 [assembly: AssemblyProduct("UmbCanonicalUrlRedirect")]

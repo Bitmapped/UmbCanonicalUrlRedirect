@@ -1,1 +1,0 @@
-See https://umbcanonicalurlredirect.codeplex.com/documentation for details.

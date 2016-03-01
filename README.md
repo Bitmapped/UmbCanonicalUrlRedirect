@@ -14,5 +14,7 @@ This project is available on [NuGet](https://www.nuget.org/packages/UmbCanonical
 ## Usage instructions
 ### Getting started
 1. Add **UmbCanonicalUrlRedirect.dll** as a reference in your project or place it in the **\bin** folder.
-2. If you wish to be able prevent specific pages from being redirected, add a true/false-type document property in Umbraco:
+2. Insert the following `<appSettings>` key in **web.config**:
+  - `CanonicalUrlRedirect:UseTemporaryRedirects` - true/false (default false) if to use 302 Temporary redirects rather than 301 Permanent redirects
+3. If you wish to be able prevent specific pages from being redirected, add a true/false-type document property in Umbraco:
   - `umbNoCanonicalRedirect`

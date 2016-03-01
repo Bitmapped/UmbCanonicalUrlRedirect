@@ -6,11 +6,37 @@ using Umbraco.Core.Configuration;
 using Umbraco.Web.Routing;
 using Umbraco.Core.Logging;
 using Umbraco.Web;
+using UmbCanonicalUrlRedirect.Support;
 
 namespace UmbCanonicalUrlRedirect.Events
 {
     public class CanonicalUrlRedirectEventHandler : ApplicationEventHandler
     {
+
+        #region Fields
+
+        /// <summary>
+        /// Configuration settings.
+        /// </summary>
+        private readonly Settings settings;
+
+        #endregion Fields
+
+        #region Constructors
+
+        /// <summary>
+        /// Constructor to load settings.
+        /// </summary>
+        public CanonicalUrlRedirectEventHandler()
+        {
+            // Load settings from config file.
+            this.settings = new Settings();
+        }
+
+        #endregion Constructors
+
+        #region Methods
+
         /// <summary>
         /// Register event handler on start.
         /// </summary>
@@ -48,13 +74,10 @@ namespace UmbCanonicalUrlRedirect.Events
             }
 
             // Check to see if we should not redirect this page. Use InitialPublishedContent to get properties for requested page, not a login redirect.
-            if (request.InitialPublishedContent.HasProperty("umbNoCanonicalRedirect"))
+            if (request.InitialPublishedContent.GetPropertyValue<bool>("umbNoCanonicalRedirect", false))
             {
-                if (request.InitialPublishedContent.GetPropertyValue<bool>("umbNoCanonicalRedirect"))
-                {
-                    // No redirect.
-                    return;
-                }
+                // No redirect.
+                return;
             }
 
             // Get URLs. Use InitialPublishedContent to get properties for requested page, not a login redirect.
@@ -63,23 +86,34 @@ namespace UmbCanonicalUrlRedirect.Events
 
             // If URLs don't match, perform redirect.
             if (requestedPath != properPath)
-            {       
+            {
                 // Calculate proper path and query string.
                 var properPathAndQuery = properPath + context.Request.Url.Query;
 
                 // Substitute proper path for requested path.
                 var redirectUrl = new Uri(request.Uri, properPathAndQuery);
 
-                // Set for Umbraco to perform redirection.
-                request.SetRedirectPermanent(redirectUrl.AbsoluteUri);
-
                 // Log for debugging.
-                LogHelper.Debug<CanonicalUrlRedirectEventHandler>("Permanently redirecting {0} to {1}.",
+                LogHelper.Debug<CanonicalUrlRedirectEventHandler>("Redirecting from {0} to {1} using {2} redirect.",
                     () => requestedPath,
-                    () => properPath);
+                    () => properPath,
+                    () => (settings.UseTemporaryRedirects ? "temporary" : "permanent"));
+
+                // Set for Umbraco to perform redirection.
+                if (settings.UseTemporaryRedirects)
+                {
+                    request.SetRedirect(redirectUrl.AbsoluteUri);
+                }
+                else
+                {
+                    request.SetRedirectPermanent(redirectUrl.AbsoluteUri);
+                }
 
                 return;
             }
         }
+
+        #endregion Methods
+
     }
 }
